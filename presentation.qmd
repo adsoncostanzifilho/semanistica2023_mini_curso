@@ -1,0 +1,109 @@
+---
+title: "Mini Curso tidyr e dplyr"
+subtitle: "Adson Costanzi Filho"
+format:
+  revealjs:
+    theme: dark
+    smaller: true
+    scrollable: true 
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    css: styles.css
+---
+
+## Cronograma
+
+::: incremental
+- Módulo 1: Introdução ao `tidyr` e `dplyr` (20 minutos)
+  - Importação de dados e visão geral dos dados
+- Módulo 2: Transformação de Dados com `tidyr` (25 minutos)
+  - Uso do *pivot_longer* e *pivot_wider*
+- Módulo 3: Manipulação de Dados com `dplyr` (25 minutos)
+  - Filtrando, selecionando, ordenando e juntando dados
+  - Criando novas variáveis
+- Módulo 4: Agrupamento e Sumarização com `dplyr` (20 minutos)
+  - Agrupamento es sumarização de dados (funções agregadoras)
+- Módulo 5: Visualização com `ggplot2` e `plotly` (25 minutos)
+  - Criação de gráficos con ggplot2 (boxplot, disperçao, etc)
+  - Tornando os gráficos interativos com `plotly`
+:::
+
+
+## Introdução ao `tidyr` e `dplyr`
+
+### tidyr
+
+- Pacote do tidyverse para manipulação de dados.
+- Projetado para tornar os dados "arrumados" (tidy).
+- Oferece funções para reformatar e organizar dados.
+- [Documentação oficial do tidyr](https://tidyr.tidyverse.org/)
+
+### dplyr
+
+- Pacote do tidyverse para manipulação de dados tabulares.
+- Fornece funções para filtrar, transformar e resumir dados.
+- Amplamente usado para operações de limpeza e transformação de dados.
+- [Documentação oficial do dplyr](https://dplyr.tidyverse.org/)
+
+
+## Introdução ao `tidyr` e `dplyr`
+
+Para nosso exercício prático vamos utilizar dados extraída do repositório [TidyTuesday](https://github.com/rfordatascience/tidytuesday/tree/master). 
+
+```{r, echo=TRUE}
+library(readr)
+library(dplyr)
+library(tidyr)
+
+# Importe a base de dados do TidyTuesday direto do Github
+taylor_album_songs <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_album_songs.csv')
+taylor_all_songs <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_all_songs.csv')
+taylor_albums <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_albums.csv')
+
+# Visualize as primeiras linhas dos dados
+knitr::kable(taylor_albums %>% top_n(4))
+
+```
+
+
+## Transformação de Dados com `tidyr`
+
+Uso do `pivot_longer` e `pivot_wider`.
+
+```{r, echo=TRUE}
+# Use as pivot_longer e pivot_wider (disponíveis no tidyr 1.0)
+
+#data_long_new <- data %>% pivot_longer(cols = -c(week, year), names_to = "variavel", values_to = "valor")
+
+#data_wide_new <- data_long_new %>% pivot_wider(names_from = variavel, values_from = valor)
+
+```
+
+
+## Manipulação de Dados com `dplyr`
+
+Uso do `select`, `filter`, `left_join`, `inner_join`, `bind_rows`, `bind_cols`, `mutate`, `arrange`
+
+```{r, echo=TRUE}
+# exemplo
+```
+
+
+
+## Agrupamento e Sumarização com `dplyr`
+
+Uso do `group_by`, `ungroup`, `summarise`.
+
+```{r, echo=TRUE}
+# exemplo
+```
+
+
+## Visualização com `ggplot2` e `plotly`
+
+Gráficos simples com `ggplot2` e `plotly`. 
+
+```{r, echo=TRUE}
+# exemplo
+```
