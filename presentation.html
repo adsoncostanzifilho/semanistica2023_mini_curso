@@ -387,6 +387,14 @@
       margin-right: 0; 
     }
   </style>
+  <script src="presentation_files/libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+  <script src="presentation_files/libs/plotly-binding-4.10.2/plotly.js"></script>
+  <script src="presentation_files/libs/typedarray-0.1/typedarray.min.js"></script>
+  <script src="presentation_files/libs/jquery-3.5.1/jquery.min.js"></script>
+  <link href="presentation_files/libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
+  <script src="presentation_files/libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+  <link href="presentation_files/libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+  <script src="presentation_files/libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
 </head>
 <body class="quarto-dark">
   <div class="reveal">
@@ -408,14 +416,14 @@
 <ul>
 <li class="fragment">Importação de dados e visão geral dos dados</li>
 </ul></li>
-<li class="fragment">Módulo 2: Transformação de Dados com <code>tidyr</code> (25 minutos)
-<ul>
-<li class="fragment">Uso do <em>pivot_longer</em> e <em>pivot_wider</em></li>
-</ul></li>
-<li class="fragment">Módulo 3: Manipulação de Dados com <code>dplyr</code> (25 minutos)
+<li class="fragment">Módulo 2: Manipulação de Dados com <code>dplyr</code> (25 minutos)
 <ul>
 <li class="fragment">Filtrando, selecionando, ordenando e juntando dados</li>
 <li class="fragment">Criando novas variáveis</li>
+</ul></li>
+<li class="fragment">Módulo 3: Transformação de Dados com <code>tidyr</code> (25 minutos)
+<ul>
+<li class="fragment">Uso do <em>pivot_longer</em> e <em>pivot_wider</em></li>
 </ul></li>
 <li class="fragment">Módulo 4: Agrupamento e Sumarização com <code>dplyr</code> (20 minutos)
 <ul>
@@ -453,14 +461,17 @@
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(readr)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb1-4"><a href="#cb1-4"></a></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co"># Importe a base de dados do TidyTuesday direto do Github</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a>taylor_album_songs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_album_songs.csv'</span>)</span>
-<span id="cb1-7"><a href="#cb1-7"></a>taylor_all_songs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_all_songs.csv'</span>)</span>
-<span id="cb1-8"><a href="#cb1-8"></a>taylor_albums <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_albums.csv'</span>)</span>
-<span id="cb1-9"><a href="#cb1-9"></a></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co"># Visualize as primeiras linhas dos dados</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(taylor_albums <span class="sc">%&gt;%</span> <span class="fu">top_n</span>(<span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">library</span>(plotly)</span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co"># Importe a base de dados do TidyTuesday direto do Github</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a>taylor_album_songs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_album_songs.csv'</span>)</span>
+<span id="cb1-10"><a href="#cb1-10"></a>taylor_all_songs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_all_songs.csv'</span>)</span>
+<span id="cb1-11"><a href="#cb1-11"></a>taylor_albums <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_albums.csv'</span>)</span>
+<span id="cb1-12"><a href="#cb1-12"></a></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co"># Primeiras linhas dos dados</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(taylor_albums <span class="sc">%&gt;%</span> <span class="fu">top_n</span>(<span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table>
 <colgroup>
@@ -513,36 +524,92 @@
 </div>
 </div>
 </section>
-<section id="transformação-de-dados-com-tidyr" class="slide level2">
-<h2>Transformação de Dados com <code>tidyr</code></h2>
-<p>Uso do <code>pivot_longer</code> e <code>pivot_wider</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Use as pivot_longer e pivot_wider (disponíveis no tidyr 1.0)</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="co">#data_long_new &lt;- data %&gt;% pivot_longer(cols = -c(week, year), names_to = "variavel", values_to = "valor")</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="co">#data_wide_new &lt;- data_long_new %&gt;% pivot_wider(names_from = variavel, values_from = valor)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
 <section id="manipulação-de-dados-com-dplyr" class="slide level2">
 <h2>Manipulação de Dados com <code>dplyr</code></h2>
 <p>Uso do <code>select</code>, <code>filter</code>, <code>left_join</code>, <code>inner_join</code>, <code>bind_rows</code>, <code>bind_cols</code>, <code>mutate</code>, <code>arrange</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># exemplo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># select (selecionando colunas)</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>df <span class="ot">&lt;-</span> taylor_album_songs <span class="sc">%&gt;%</span> </span>
+<span id="cb2-3"><a href="#cb2-3"></a>  <span class="fu">select</span>(album_name, track_number, track_name, album_release, loudness, danceability)</span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="co"># mutate (criando novas colunas)</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb2-7"><a href="#cb2-7"></a>  <span class="fu">mutate</span>(<span class="at">release_year =</span> lubridate<span class="sc">::</span><span class="fu">year</span>(album_release))</span>
+<span id="cb2-8"><a href="#cb2-8"></a></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="co"># filter (filtrando o data frame)</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a>df_2010 <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb2-11"><a href="#cb2-11"></a>  <span class="fu">filter</span>(release_year <span class="sc">==</span> <span class="dv">2010</span>)</span>
+<span id="cb2-12"><a href="#cb2-12"></a></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="co"># arrange (ordenando o data frame)</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb2-15"><a href="#cb2-15"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(release_year))</span>
+<span id="cb2-16"><a href="#cb2-16"></a></span>
+<span id="cb2-17"><a href="#cb2-17"></a><span class="co"># left join (unindo tabelas)</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a>taylor_albums_clean <span class="ot">&lt;-</span> taylor_albums <span class="sc">%&gt;%</span> </span>
+<span id="cb2-19"><a href="#cb2-19"></a>  <span class="fu">select</span>(album_name, metacritic_score, user_score)</span>
+<span id="cb2-20"><a href="#cb2-20"></a></span>
+<span id="cb2-21"><a href="#cb2-21"></a>df_join <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb2-22"><a href="#cb2-22"></a>  <span class="fu">left_join</span>(taylor_albums_clean, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"album_name"</span><span class="ot">=</span><span class="st">"album_name"</span>))</span>
+<span id="cb2-23"><a href="#cb2-23"></a></span>
+<span id="cb2-24"><a href="#cb2-24"></a><span class="co">#inner join (unindo tabelas)</span></span>
+<span id="cb2-25"><a href="#cb2-25"></a>df_join <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb2-26"><a href="#cb2-26"></a>  <span class="fu">inner_join</span>(taylor_albums_clean[<span class="sc">-</span><span class="dv">1</span>,], <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"album_name"</span><span class="ot">=</span><span class="st">"album_name"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="transformação-de-dados-com-tidyr" class="slide level2">
+<h2>Transformação de Dados com <code>tidyr</code></h2>
+<p>Uso do <code>pivot_longer</code> e <code>pivot_wider</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># criando uma tabela auxiliar para usar de exemplo</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>df_long <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="fu">group_by</span>(album_name, release_year) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-4"><a href="#cb3-4"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-5"><a href="#cb3-5"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb3-6"><a href="#cb3-6"></a></span>
+<span id="cb3-7"><a href="#cb3-7"></a></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co"># pivot_wider</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a>df_wider <span class="ot">&lt;-</span> df_long <span class="sc">%&gt;%</span> <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> album_name,<span class="at">names_from =</span> release_year,<span class="at">values_from =</span> n)</span>
+<span id="cb3-10"><a href="#cb3-10"></a></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co"># pivot_longer</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>df_longer_again <span class="ot">&lt;-</span> df_wider <span class="sc">%&gt;%</span> </span>
+<span id="cb3-13"><a href="#cb3-13"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb3-14"><a href="#cb3-14"></a>    <span class="at">cols =</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">2014</span><span class="st">`</span>, <span class="st">`</span><span class="at">2021</span><span class="st">`</span>, <span class="st">`</span><span class="at">2019</span><span class="st">`</span>, <span class="st">`</span><span class="at">2022</span><span class="st">`</span>, <span class="st">`</span><span class="at">2010</span><span class="st">`</span>, <span class="st">`</span><span class="at">2006</span><span class="st">`</span>, <span class="st">`</span><span class="at">2020</span><span class="st">`</span>, <span class="st">`</span><span class="at">2017</span><span class="st">`</span>),</span>
+<span id="cb3-15"><a href="#cb3-15"></a>    <span class="at">names_to =</span> <span class="st">"year"</span>,</span>
+<span id="cb3-16"><a href="#cb3-16"></a>    <span class="at">values_to =</span> <span class="st">"n"</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-18"><a href="#cb3-18"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="agrupamento-e-sumarização-com-dplyr" class="slide level2">
 <h2>Agrupamento e Sumarização com <code>dplyr</code></h2>
 <p>Uso do <code>group_by</code>, <code>ungroup</code>, <code>summarise</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># exemplo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># group_by, ungroup, summarise.</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>df_group <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a href="#cb4-3"></a>  <span class="fu">group_by</span>(album_name) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-4"><a href="#cb4-4"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb4-5"><a href="#cb4-5"></a>    <span class="at">danceability_avg =</span> <span class="fu">mean</span>(danceability, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-6"><a href="#cb4-6"></a>    <span class="at">danceability_median =</span> <span class="fu">median</span>(danceability, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-7"><a href="#cb4-7"></a>    <span class="at">danceability_sd =</span> <span class="fu">sd</span>(danceability, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-8"><a href="#cb4-8"></a>    <span class="at">danceability_min =</span> <span class="fu">min</span>(danceability, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-9"><a href="#cb4-9"></a>    <span class="at">danceability_max =</span> <span class="fu">max</span>(danceability, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-10"><a href="#cb4-10"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-11"><a href="#cb4-11"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="visualização-com-ggplot2-e-plotly" class="slide level2">
 <h2>Visualização com <code>ggplot2</code> e <code>plotly</code></h2>
 <p>Gráficos simples com <code>ggplot2</code> e <code>plotly</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># exemplo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>plot <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> album_name, <span class="at">y =</span> danceability, <span class="at">fill =</span> album_name)) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb5-3"><a href="#cb5-3"></a>  CSGo<span class="sc">::</span><span class="fu">theme_csgo</span>() </span>
+<span id="cb5-4"><a href="#cb5-4"></a></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="fu">ggplotly</span>(plot, <span class="at">width =</span> <span class="dv">1100</span>, <span class="at">height =</span> <span class="dv">350</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="htmlwidget-e7b1ea4a4429aeb4052e" style="width:1100px;height:350px;" class="plotly html-widget "></div>
+<script type="application/json" data-for="htmlwidget-e7b1ea4a4429aeb4052e">{"x":{"data":[{"x":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"y":[0.78900000000000003,0.76000000000000001,0.58799999999999997,0.55300000000000005,0.60499999999999998,0.64700000000000002,0.65300000000000002,0.64600000000000002,0.55000000000000004,0.76500000000000001,0.48099999999999998,0.60199999999999998,0.81499999999999995,0.42199999999999999,0.47399999999999998,0.63300000000000001],"hoverinfo":"y","type":"box","fillcolor":"rgba(248,118,109,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"},"size":5.6692913385826778},"line":{"color":"rgba(51,51,51,1)","width":1.8897637795275593},"name":"1989","legendgroup":"1989","showlegend":true,"xaxis":"x","yaxis":"y","frame":null},{"x":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],"y":[0.39200000000000002,0.46200000000000002,0.51200000000000001,0.57499999999999996,0.316,0.54600000000000004,0.55900000000000005,0.60499999999999998,0.53700000000000003,0.51500000000000001,0.60399999999999998,0.54600000000000004,0.53500000000000003,0.68899999999999995,0.39000000000000001,0.58099999999999996,0.59199999999999997],"hoverinfo":"y","type":"box","fillcolor":"rgba(216,144,0,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"},"size":5.6692913385826778},"line":{"color":"rgba(51,51,51,1)","width":1.8897637795275593},"name":"evermore","legendgroup":"evermore","showlegend":true,"xaxis":"x","yaxis":"y","frame":null},{"x":[3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],"y":[0.56899999999999995,0.55900000000000005,0.627,0.78800000000000003,0.42299999999999999,0.63200000000000001,0.50600000000000001,0.57799999999999996,0.50600000000000001,0.40200000000000002,0.59799999999999998,0.64200000000000002,0.499,0.57199999999999995,0.39300000000000002,0.54600000000000004,0.47599999999999998,0.45400000000000001,0.432,0.48199999999999998,0.59899999999999998,0.66000000000000003,0.60899999999999999,0.58799999999999997,0.56299999999999994,0.624],"hoverinfo":"y","type":"box","fillcolor":"rgba(163,165,0,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"},"size":5.6692913385826778},"line":{"color":"rgba(51,51,51,1)","width":1.8897637795275593},"name":"Fearless (Taylor's Version)","legendgroup":"Fearless (Taylor's Version)","showlegend":true,"xaxis":"x","yaxis":"y","frame":null},{"x":[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4],"y":[0.78000000000000003,0.61199999999999999,0.68799999999999994,0.31,0.45600000000000002,0.54900000000000004,0.60199999999999998,0.38700000000000001,0.51100000000000001,0.52900000000000003,0.65100000000000002,0.59299999999999997,0.317,0.59499999999999997,0.64400000000000002,0.67600000000000005,0.313],"hoverinfo":"y","type":"box","fillcolor":"rgba(57,182,0,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"},"size":5.6692913385826778},"line":{"color":"rgba(51,51,51,1)","width":1.8897637795275593},"name":"folklore","legendgroup":"folklore","showlegend":true,"xaxis":"x","yaxis":"y","frame":null},{"x":[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],"y":[0.66400000000000003,0.55200000000000005,0.35899999999999999,0.77700000000000002,0.29199999999999998,0.89700000000000002,0.66200000000000003,0.81100000000000005,0.82399999999999995,0.71199999999999997,0.69499999999999995,0.433,0.73899999999999999,0.77100000000000002,0.75600000000000001,0.60999999999999999,0.73699999999999999,0.55700000000000005],"hoverinfo":"y","type":"box","fillcolor":"rgba(0,191,125,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"},"size":5.6692913385826778},"line":{"color":"rgba(51,51,51,1)","width":1.8897637795275593},"name":"Lover","legendgroup":"Lover","showlegend":true,"xaxis":"x","yaxis":"y","frame":null},{"x":[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6],"y":[0.73499999999999999,0.65800000000000003,0.63800000000000001,0.65900000000000003,0.69399999999999995,0.63600000000000001,0.751,0.87,0.69999999999999996,0.48699999999999999,0.64900000000000002,0.33400000000000002,0.66100000000000003,0.57299999999999995,0.42199999999999999,0.69999999999999996,0.64600000000000002,0.67500000000000004,0.48299999999999998,0.56200000000000006,null,null,null],"hoverinfo":"y","type":"box","fillcolor":"rgba(0,191,196,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"},"size":5.6692913385826778},"line":{"color":"rgba(51,51,51,1)","width":1.8897637795275593},"name":"Midnights","legendgroup":"Midnights","showlegend":true,"xaxis":"x","yaxis":"y","frame":null},{"x":[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7],"y":[0.59399999999999997,0.51600000000000001,0.64500000000000002,0.58399999999999996,0.44,0.64200000000000002,0.51100000000000001,0.56699999999999995,0.69299999999999995,0.502,0.622,0.60099999999999998,0.68600000000000005,0.498,0.628,0.51900000000000002,0.63600000000000001,0.46000000000000002,0.69099999999999995,0.44500000000000001,0.623,0.47299999999999998,0.60599999999999998,0.58399999999999996,0.622,0.39100000000000001,0.61099999999999999,0.60999999999999999,0.67800000000000005,0.63100000000000001],"hoverinfo":"y","type":"box","fillcolor":"rgba(0,176,246,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"},"size":5.6692913385826778},"line":{"color":"rgba(51,51,51,1)","width":1.8897637795275593},"name":"Red (Taylor's Version)","legendgroup":"Red (Taylor's Version)","showlegend":true,"xaxis":"x","yaxis":"y","frame":null},{"x":[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8],"y":[0.61299999999999999,0.64900000000000002,0.69599999999999995,0.61499999999999999,0.75,0.76600000000000001,0.57399999999999995,0.80000000000000004,0.56200000000000006,0.67500000000000004,0.624,0.71899999999999997,0.56699999999999995,0.59799999999999998,0.66100000000000003],"hoverinfo":"y","type":"box","fillcolor":"rgba(149,144,255,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"},"size":5.6692913385826778},"line":{"color":"rgba(51,51,51,1)","width":1.8897637795275593},"name":"reputation","legendgroup":"reputation","showlegend":true,"xaxis":"x","yaxis":"y","frame":null},{"x":[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9],"y":[0.624,0.60499999999999998,0.52900000000000003,0.70899999999999996,0.58899999999999997,0.56799999999999995,0.54300000000000004,0.71399999999999997,0.45500000000000002,0.51600000000000001,0.55200000000000005,0.436,0.371,0.41799999999999998,0.60799999999999998,0.51100000000000001,0.58199999999999996],"hoverinfo":"y","type":"box","fillcolor":"rgba(231,107,243,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"},"size":5.6692913385826778},"line":{"color":"rgba(51,51,51,1)","width":1.8897637795275593},"name":"Speak Now","legendgroup":"Speak Now","showlegend":true,"xaxis":"x","yaxis":"y","frame":null},{"x":[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10],"y":[0.57999999999999996,0.65800000000000003,0.621,0.57599999999999996,0.41799999999999998,0.58899999999999997,0.47899999999999998,0.59399999999999997,0.47599999999999998,0.40300000000000002,0.66800000000000004,0.56299999999999994,0.61199999999999999,0.48299999999999998,0.45900000000000002],"hoverinfo":"y","type":"box","fillcolor":"rgba(255,98,188,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"},"size":5.6692913385826778},"line":{"color":"rgba(51,51,51,1)","width":1.8897637795275593},"name":"Taylor Swift","legendgroup":"Taylor Swift","showlegend":true,"xaxis":"x","yaxis":"y","frame":null}],"layout":{"margin":{"t":38.961513372472282,"r":7.3059360730593621,"b":124.35360516828113,"l":43.105022831050235},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,10.6],"tickmode":"array","ticktext":["1989","evermore","Fearless (Taylor's Version)","folklore","Lover","Midnights","Red (Taylor's Version)","reputation","Speak Now","Taylor Swift"],"tickvals":[1,2,3,4,5,6.0000000000000009,7,8,9,10],"categoryorder":"array","categoryarray":["1989","evermore","Fearless (Taylor's Version)","folklore","Lover","Midnights","Red (Taylor's Version)","reputation","Speak Now","Taylor Swift"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"<b> album_name <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.26174999999999998,0.92725000000000002],"tickmode":"array","ticktext":["0.4","0.6","0.8"],"tickvals":[0.40000000000000002,0.60000000000000009,0.80000000000000004],"categoryorder":"array","categoryarray":["0.4","0.6","0.8"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"<b> danceability <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176002,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498},"title":{"text":"album_name","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","width":1100,"height":350,"barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"92bf73279eaa":{"x":{},"y":{},"fill":{},"type":"box"}},"cur_data":"92bf73279eaa","visdat":{"92bf73279eaa":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
 </div>
 <div class="footer footer-default">
 
