@@ -1,6 +1,9 @@
 ---
 title: "Mini Curso tidyr e dplyr"
 subtitle: "Adson Costanzi Filho"
+project:
+  type: website
+  output-dir: docs
 format:
   revealjs:
     theme: dark
