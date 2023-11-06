@@ -65,7 +65,7 @@ taylor_all_songs <- read_csv('https://raw.githubusercontent.com/rfordatascience/
 taylor_albums <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_albums.csv')
 
 # Primeiras linhas dos dados
-knitr::kable(taylor_albums %>% top_n(4))
+knitr::kable(taylor_albums |> top_n(4))
 
 ```
 
@@ -77,30 +77,30 @@ Uso do `select`, `filter`, `left_join`, `inner_join`, `bind_rows`, `bind_cols`, 
 
 ```{r, echo=TRUE}
 # select (selecionando colunas)
-df <- taylor_album_songs %>% 
+df <- taylor_album_songs |> 
   select(album_name, track_number, track_name, album_release, loudness, danceability)
 
 # mutate (criando novas colunas)
-df <- df %>% 
+df <- df |> 
   mutate(release_year = lubridate::year(album_release))
 
 # filter (filtrando o data frame)
-df_2010 <- df %>% 
+df_2010 <- df |> 
   filter(release_year == 2010)
 
 # arrange (ordenando o data frame)
-df <- df %>% 
+df <- df |> 
   arrange(desc(release_year))
 
 # left join (unindo tabelas)
-taylor_albums_clean <- taylor_albums %>% 
+taylor_albums_clean <- taylor_albums |> 
   select(album_name, metacritic_score, user_score)
 
-df_join <- df %>% 
+df_join <- df |> 
   left_join(taylor_albums_clean, by = c("album_name"="album_name"))
 
 #inner join (unindo tabelas)
-df_join <- df %>% 
+df_join <- df |> 
   inner_join(taylor_albums_clean[-1,], by = c("album_name"="album_name"))
 
 ```
@@ -112,22 +112,23 @@ Uso do `pivot_longer` e `pivot_wider`.
 
 ```{r, echo=TRUE}
 # criando uma tabela auxiliar para usar de exemplo
-df_long <- df %>% 
-  group_by(album_name, release_year) %>% 
-  summarise(n = n()) %>% 
+df_long <- df |> 
+  group_by(album_name, release_year) |> 
+  summarise(n = n()) |> 
   ungroup()
 
 
 # pivot_wider
-df_wider <- df_long %>% pivot_wider(id_cols = album_name,names_from = release_year,values_from = n)
+df_wider <- df_long |> 
+  pivot_wider(id_cols = album_name,names_from = release_year,values_from = n)
 
 # pivot_longer
-df_longer_again <- df_wider %>% 
+df_longer_again <- df_wider |> 
   pivot_longer(
     cols = c(`2014`, `2021`, `2019`, `2022`, `2010`, `2006`, `2020`, `2017`),
     names_to = "year",
     values_to = "n"
-  ) %>% 
+  ) |> 
   filter(!is.na(n))
 
 ```
@@ -139,15 +140,15 @@ Uso do `group_by`, `ungroup`, `summarise`.
 
 ```{r, echo=TRUE}
 # group_by, ungroup, summarise.
-df_group <- df %>% 
-  group_by(album_name) %>% 
+df_group <- df |> 
+  group_by(album_name) |> 
   summarise(
     danceability_avg = mean(danceability, na.rm = TRUE),
     danceability_median = median(danceability, na.rm = TRUE),
     danceability_sd = sd(danceability, na.rm = TRUE),
     danceability_min = min(danceability, na.rm = TRUE),
     danceability_max = max(danceability, na.rm = TRUE)
-  ) %>% 
+  ) |> 
   ungroup()
 ```
 
@@ -157,7 +158,7 @@ df_group <- df %>%
 Gráficos simples com `ggplot2` e `plotly`. 
 
 ```{r, echo=TRUE}
-plot <- df %>% ggplot(aes(x = album_name, y = danceability, fill = album_name)) +
+plot <- df |> ggplot(aes(x = album_name, y = danceability, fill = album_name)) +
   geom_boxplot() + 
   CSGo::theme_csgo() 
 
