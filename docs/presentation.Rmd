@@ -1,0 +1,206 @@
+---
+title: "Mini Curso tidyr e dplyr"
+subtitle: "Semanística 2023"
+author: "Adson Costanzi Filho"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: ["style.css", default, metropolis, metropolis-fonts, ]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{css, echo=FALSE}
+.pre {
+  height: 30pc;
+  overflow-y: scroll;
+}
+```
+
+
+# Cronograma
+
+--
+- Módulo 1: Introdução ao `tidyr` e `dplyr` (20 minutos)
+
+  - Importação de dados e visão geral dos dados
+--
+
+- Módulo 2: Manipulação de Dados com `dplyr` (25 minutos)
+
+  - Filtrando, selecionando, ordenando e juntando dados
+
+  - Criando novas variáveis
+--
+
+- Módulo 3: Transformação de Dados com `tidyr` (25 minutos)
+
+  - Uso do *pivot_longer* e *pivot_wider*
+--
+
+- Módulo 4: Agrupamento e Sumarização com `dplyr` (20 minutos)
+
+  - Agrupamento es sumarização de dados (funções agregadoras)
+--
+
+- Módulo 5: Visualização com `ggplot2` e `plotly` (25 minutos)
+
+  - Criação de gráficos con ggplot2 (boxplot, disperçao, etc)
+ 
+  - Tornando os gráficos interativos com `plotly`
+  
+---
+
+# Introdução ao `tidyr` e `dplyr`
+
+## tidyr
+
+- Pacote do tidyverse para manipulação de dados.
+
+- Projetado para tornar os dados "arrumados" (tidy).
+
+- Oferece funções para reformatar e organizar dados.
+
+- [Documentação oficial do tidyr](https://tidyr.tidyverse.org/)
+
+## dplyr
+
+- Pacote do tidyverse para manipulação de dados tabulares.
+
+- Fornece funções para filtrar, transformar e resumir dados.
+
+- Amplamente usado para operações de limpeza e transformação de dados.
+
+- [Documentação oficial do dplyr](https://dplyr.tidyverse.org/)
+
+---
+# Introdução ao `tidyr` e `dplyr`
+
+Para nosso exercício prático vamos utilizar dados extraída do repositório [TidyTuesday](https://github.com/rfordatascience/tidytuesday/tree/master). 
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(ggplot2)
+library(plotly)
+
+# Importe a base de dados do TidyTuesday direto do Github
+taylor_album_songs <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_album_songs.csv')
+taylor_all_songs <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_all_songs.csv')
+taylor_albums <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-10-17/taylor_albums.csv')
+
+# Primeiras linhas dos dados
+knitr::kable(taylor_albums |> top_n(2))
+
+```
+---
+
+# Manipulação de Dados com `dplyr`
+
+Uso do `select`, `filter`, `left_join`, `inner_join`, `bind_rows`, `bind_cols`, `mutate`, `arrange`
+
+.pre[
+```{r, echo=TRUE, message=FALSE, warning=FALSE,size=10}
+
+# select (selecionando colunas)
+df <- taylor_album_songs |> 
+  select(album_name, track_number, track_name, album_release, loudness, danceability)
+
+# mutate (criando novas colunas)
+df <- df |> 
+  mutate(release_year = lubridate::year(album_release))
+
+# filter (filtrando o data frame)
+df_2010 <- df |> 
+  filter(release_year == 2010)
+
+# arrange (ordenando o data frame)
+df <- df |> 
+  arrange(desc(release_year))
+
+# left join (unindo tabelas)
+taylor_albums_clean <- taylor_albums |> 
+  select(album_name, metacritic_score, user_score)
+
+df_join <- df |> 
+  left_join(taylor_albums_clean, by = c("album_name"="album_name"))
+
+#inner join (unindo tabelas)
+df_join <- df |> 
+  inner_join(taylor_albums_clean[-1,], by = c("album_name"="album_name"))
+
+```
+]
+
+---
+# Transformação de Dados com `tidyr`
+
+Uso do `pivot_longer` e `pivot_wider`.
+
+.pre[
+```{r, echo=TRUE}
+# criando uma tabela auxiliar para usar de exemplo
+df_long <- df |> 
+  group_by(album_name, release_year) |> 
+  summarise(n = n()) |> 
+  ungroup()
+
+
+# pivot_wider
+df_wider <- df_long |> 
+  pivot_wider(id_cols = album_name,names_from = release_year,values_from = n)
+
+# pivot_longer
+df_longer_again <- df_wider |> 
+  pivot_longer(
+    cols = c(`2014`, `2021`, `2019`, `2022`, `2010`, `2006`, `2020`, `2017`),
+    names_to = "year",
+    values_to = "n"
+  ) |> 
+  filter(!is.na(n))
+
+```
+]
+
+---
+# Agrupamento e Sumarização com `dplyr`
+
+Uso do `group_by`, `ungroup`, `summarise`.
+
+```{r, echo=TRUE}
+# group_by, ungroup, summarise.
+df_group <- df |> 
+  group_by(album_name) |> 
+  summarise(
+    danceability_avg = mean(danceability, na.rm = TRUE),
+    danceability_median = median(danceability, na.rm = TRUE),
+    danceability_sd = sd(danceability, na.rm = TRUE),
+    danceability_min = min(danceability, na.rm = TRUE),
+    danceability_max = max(danceability, na.rm = TRUE)
+  ) |> 
+  ungroup()
+```
+
+
+---
+# Visualização com `ggplot2` e `plotly`
+
+Gráficos simples com `ggplot2` e `plotly`. 
+
+```{r, echo=TRUE}
+plot <- df |> ggplot(aes(x = album_name, y = danceability, fill = album_name)) +
+  geom_boxplot() + 
+  CSGo::theme_csgo() 
+
+ggplotly(plot)
+```
+
