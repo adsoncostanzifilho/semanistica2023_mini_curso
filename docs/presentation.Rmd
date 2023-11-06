@@ -109,7 +109,7 @@ knitr::kable(taylor_albums |> top_n(2))
 Uso do `select`, `filter`, `left_join`, `inner_join`, `bind_rows`, `bind_cols`, `mutate`, `arrange`
 
 .pre[
-```{r, echo=TRUE, message=FALSE, warning=FALSE,size=10}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 
 # select (selecionando colunas)
 df <- taylor_album_songs |> 
@@ -176,7 +176,7 @@ df_longer_again <- df_wider |>
 
 Uso do `group_by`, `ungroup`, `summarise`.
 
-```{r, echo=TRUE}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # group_by, ungroup, summarise.
 df_group <- df |> 
   group_by(album_name) |> 
@@ -196,7 +196,7 @@ df_group <- df |>
 
 Gráficos simples com `ggplot2` e `plotly`. 
 
-```{r, echo=TRUE}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 plot <- df |> ggplot(aes(x = album_name, y = danceability, fill = album_name)) +
   geom_boxplot() + 
   CSGo::theme_csgo() 
